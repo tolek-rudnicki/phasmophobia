@@ -21,7 +21,7 @@ public class Camera implements Listener {
 
         double yaw = Math.tan(o/a);
 
-        if (pLoc.getYaw() + 60 < yaw && pLoc.getYaw() - 60 < yaw) {
+        if (pLoc.getYaw() + 60 < yaw && pLoc.getYaw() - 60 > yaw) {
             return true;
         }
 
