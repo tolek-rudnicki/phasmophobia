@@ -5,3 +5,4 @@ api-version: 1.19
 authors: [ tolek_tpr ]
 commands:
   startgame:
+  goals:

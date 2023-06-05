@@ -2,19 +2,22 @@ package me.tolek.horror.commands;
 
 import me.tolek.horror.Utils;
 import me.tolek.horror.guis.TasksGUI;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class StartGame implements CommandExecutor {
+public class Goals implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (label.equalsIgnoreCase("startgame")) {
-            Utils.startMap();
-            sender.sendMessage(ChatColor.DARK_RED + "You're in trouble now.");
+        if (sender instanceof Player && label.equalsIgnoreCase("goals")) {
+            //Utils.takePic = !Utils.takePic;
+            TasksGUI.updateInv(TasksGUI.getInv());
+            if (sender instanceof Player) {
+                Player p = (Player) sender;
+                p.openInventory(TasksGUI.getInv());
 
+            }
         }
         return false;
     }

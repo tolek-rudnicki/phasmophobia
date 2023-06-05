@@ -1,28 +1,44 @@
 package me.tolek.horror;
 
+import me.tolek.horror.ghost.GhostState;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
 
     public static Player hunter;
-    public static Entity e;
+    //public static Entity e;
     public static Player player;
     public static ItemStack EMF_SCANNER;
     public static int state = 0; /* 0 = > 25, 1 = < 25 > 20, 2 = < 20 > 10, 3 = < 10 > 7, 4 = < 7*/
+    public static boolean takePic = false;
+    public static boolean detectable = false;
+    public static boolean invisible = true;
+    public static GhostState gstate = GhostState.SILENT;
 
     public static void startMap() {
         player = Bukkit.getPlayer("bear_with_me_XD");
+        hunter = Bukkit.getPlayer("bear_with_me_XD");
         //EMF_SCANNER = new ItemStack(Material.ACACIA_PLANKS);
         //updateMeta(EMF_SCANNER);
         //player.getInventory().addItem(EMF_SCANNER);
-        e = player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
+        //e = player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
+        //e.addScoreboardTag("ghost");
+        //LivingEntity le = (LivingEntity) e;
+        //le.setAI(false);
         startSchedule();
     }
 
@@ -49,7 +65,7 @@ public class Utils {
             p.getInventory().addItem(Utils.EMF_SCANNER);
         }
     }
-    public static double checkDistance(Player p1, Entity p2) {
+    public static double checkDistance(Player p1, Player p2) {
         Location l1 = p1.getLocation();
         Location l2 = p2.getLocation();
 
@@ -58,7 +74,7 @@ public class Utils {
     public static void startSchedule() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("Horror"), () -> {
 
-            double distance = checkDistance(player, Utils.e);
+            double distance = checkDistance(player, Utils.hunter);
             if (distance > 25) {
                 state = 0;
             } else if (distance < 25 && distance > 20) {
@@ -70,8 +86,33 @@ public class Utils {
             } else if (distance < 7) {
                 state = 4;
             }
-            updateItem(state, player);
+            if (detectable) {
+                updateItem(state, player);
+            }
+            if (invisible) {
+                hunter.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1, 2));
+            }
         }, 0L, 20L);
+    }
+
+    public static ItemStack createAndAddItem(Inventory inv, Material material, int amount, int slot, String displayName, String... lore) {
+        ItemStack item;
+
+        List<String> loreList = new ArrayList<String>();
+        item = new ItemStack(material, amount);
+
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(displayName);
+
+        for (String s : lore) {
+            loreList.add(s);
+        }
+
+        meta.setLore(loreList);
+        item.setItemMeta(meta);
+
+        inv.setItem(slot, item);
+        return item;
     }
 
     public static void updateMeta(ItemStack item) {

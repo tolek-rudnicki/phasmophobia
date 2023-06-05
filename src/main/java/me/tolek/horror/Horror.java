@@ -1,7 +1,12 @@
 package me.tolek.horror;
 
+import me.tolek.horror.commands.Goals;
 import me.tolek.horror.commands.StartGame;
+import me.tolek.horror.ghost.Listeners;
+import me.tolek.horror.guis.TasksGUI;
+import me.tolek.horror.guis.listeners.TaskListener;
 import me.tolek.horror.items.Camera;
+import me.tolek.horror.items.ReaperScythe;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.PluginManager;
@@ -19,8 +24,14 @@ public final class Horror extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
 
         pm.registerEvents(new Camera(), this);
+        pm.registerEvents(new ReaperScythe(), this);
+        pm.registerEvents(new TaskListener(), this);
+        pm.registerEvents(new Listeners(), this);
 
         this.getCommand("startgame").setExecutor(new StartGame());
+        this.getCommand("goals").setExecutor(new Goals());
+
+        TasksGUI.Initialize();
     }
 
     @Override
