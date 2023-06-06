@@ -73,7 +73,7 @@ public class Camera implements Listener {
 
     @EventHandler
     public void onRightClick(PlayerInteractEvent event) {
-        if (event == null || event.getItem() == null || Utils.e == null) { return; }
+        if (event == null || event.getItem() == null || Utils.hunter == null) { return; }
 
         Material itemMat = event.getItem().getType();
         ItemStack item = event.getItem();
@@ -81,17 +81,19 @@ public class Camera implements Listener {
         Player p = event.getPlayer();
 
 
-        if (name.equalsIgnoreCase("Camera") && itemMat == Material.ACACIA_SAPLING) {
+        if (name.equalsIgnoreCase("Camera") && itemMat == Material.APPLE) {
             if (!checkIfPlayerHasCooldown(p)) {
                 launchCooldown(p, 5);
 
                 //p.sendMessage("EIP: " + entityInPath(Utils.e, p));
                 Utils.takePic = entityInPath(Utils.hunter, p);
+                //Utils.takePic = !Utils.takePic;
                 if (cooldown.get(p.getUniqueId()) <= 0) {
                     cooldown.remove(p.getUniqueId());
                     launchCooldown(p, 5);
                     //p.sendMessage("EIP: " + entityInPath(Utils.e, p));
                     Utils.takePic = entityInPath(Utils.hunter, p);
+                    //Utils.takePic = !Utils.takePic;
                 }
             } else {
                 launchCooldown(p, cooldown.get(p.getUniqueId()));

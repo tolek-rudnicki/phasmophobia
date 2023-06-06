@@ -2,12 +2,14 @@ package me.tolek.horror;
 
 import me.tolek.horror.ghost.GhostState;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,13 +27,19 @@ public class Utils {
     public static ItemStack EMF_SCANNER;
     public static int state = 0; /* 0 = > 25, 1 = < 25 > 20, 2 = < 20 > 10, 3 = < 10 > 7, 4 = < 7*/
     public static boolean takePic = false;
+    public static boolean elEngineer = false;
+    public static boolean plumber = false;
+    public static boolean allDone = false;
+    public static boolean hasSaid = false;
     public static boolean detectable = false;
     public static boolean invisible = true;
     public static GhostState gstate = GhostState.SILENT;
+    public static boolean setHunter = false;
+    public static boolean setPlayer = false;
 
     public static void startMap() {
-        player = Bukkit.getPlayer("bear_with_me_XD");
-        hunter = Bukkit.getPlayer("bear_with_me_XD");
+        //player = Bukkit.getPlayer("bear_with_me_XD");
+        //hunter = Bukkit.getPlayer("bear_with_me_XD");
         //EMF_SCANNER = new ItemStack(Material.ACACIA_PLANKS);
         //updateMeta(EMF_SCANNER);
         //player.getInventory().addItem(EMF_SCANNER);
@@ -39,7 +47,26 @@ public class Utils {
         //e.addScoreboardTag("ghost");
         //LivingEntity le = (LivingEntity) e;
         //le.setAI(false);
-        startSchedule();
+
+        ItemStack item = new ItemStack(Material.OBSIDIAN);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("Silent");
+        item.setItemMeta(meta);
+        hunter.getInventory().addItem(item);
+        meta.setDisplayName("Not fully silent");
+        item.setItemMeta(meta);
+        hunter.getInventory().addItem(item);
+        meta.setDisplayName("Hunt");
+        item.setItemMeta(meta);
+        hunter.getInventory().addItem(item);
+        item = new ItemStack(Material.APPLE);
+        meta.setDisplayName("Camera");
+        item.setItemMeta(meta);
+        player.getInventory().addItem(item);
+
+        if (setPlayer && setHunter) {
+            startSchedule();
+        }
     }
 
     public static void updateItem(int state, Player p) {
@@ -88,11 +115,37 @@ public class Utils {
             }
             if (detectable) {
                 updateItem(state, player);
+            } else {
+                updateItem(4, player);
             }
             if (invisible) {
-                hunter.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1, 2));
+                hunter.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 2));
+            }
+            if (elEngineer && takePic && plumber) {
+                allDone = true;
+            }
+            if (!allDone) {
+                if (hunter.getWorld().getBlockAt(10, 77, -64).getType() == Material.REDSTONE_BLOCK) {
+                    elEngineer = true;
+                } else {
+                    elEngineer = false;
+                }
+                if (hunter.getWorld().getBlockAt(-50, 74, -43).getType() == Material.REDSTONE_BLOCK) {
+                    plumber = true;
+                } else {
+                    plumber = false;
+                }
+            }
+            if (!hasSaid && allDone) {
+                player.sendTitle(ChatColor.DARK_RED + "RUN", ChatColor.DARK_RED + "The ghost is now hunting!");
+                hunter.sendTitle(ChatColor.DARK_RED + "HUNT", "");
+                hasSaid = true;
             }
         }, 0L, 20L);
+    }
+
+    public static void addItem(Inventory inv, int slot, ItemStack item) {
+        inv.setItem(slot, item);
     }
 
     public static ItemStack createAndAddItem(Inventory inv, Material material, int amount, int slot, String displayName, String... lore) {
@@ -122,27 +175,27 @@ public class Utils {
     }
 
     public static void emf1() {
-        EMF_SCANNER = new ItemStack(Material.ACACIA_PLANKS);
+        EMF_SCANNER = new ItemStack(Material.ACACIA_BOAT);
         updateMeta(EMF_SCANNER);
     }
 
     public static void emf2() {
-        EMF_SCANNER = new ItemStack(Material.STRIPPED_ACACIA_LOG);
+        EMF_SCANNER = new ItemStack(Material.ACACIA_CHEST_BOAT);
         updateMeta(EMF_SCANNER);
     }
 
     public static void emf3() {
-        EMF_SCANNER = new ItemStack(Material.STRIPPED_ACACIA_WOOD);
+        EMF_SCANNER = new ItemStack(Material.ACACIA_DOOR);
         updateMeta(EMF_SCANNER);
     }
 
     public static void emf4() {
-        EMF_SCANNER = new ItemStack(Material.ACACIA_STAIRS);
+        EMF_SCANNER = new ItemStack(Material.ACACIA_SIGN);
         updateMeta(EMF_SCANNER);
     }
 
     public static void emf5() {
-        EMF_SCANNER = new ItemStack(Material.ACACIA_LEAVES);
+        EMF_SCANNER = new ItemStack(Material.AMETHYST_SHARD);
         updateMeta(EMF_SCANNER);
     }
 

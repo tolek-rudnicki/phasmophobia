@@ -4,5 +4,5 @@ main: me.tolek.horror.Horror
 api-version: 1.19
 authors: [ tolek_tpr ]
 commands:
-  startgame:
+  game:
   goals:
